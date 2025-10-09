@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestor de Ventas - Bar (Bootstrap + PDF)</title>
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jsPDF (para exportar PDF) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body { background-color: #f7f9fb; }
+.card { box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-primary mb-4">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Gestor de Ventas - Bar</span>
+  </div>
+</nav>
+
+<div class="container mb-5">
+
+  <div class="row g-4">
+
+    <!-- CLIENTES -->
+    <div class="col-lg-4">
+      <div class="card p-3">
+        <h5>1️⃣ Crear Cliente (Noche)</h5>
+        <div class="mb-2 text-muted small">Crea un cliente para la noche. Ej: "Mesa 5", "Cliente Pedro".</div>
+        <input id="clientName" class="form-control mb-2" placeholder="Nombre del cliente">
+        <input id="clientDate" type="date" class="form-control mb-3">
+        <div class="d-flex gap-2 mb-3">
+          <button class="btn btn-primary w-100" id="createClientBtn">Crear cliente</button>
+          <button class="btn btn-outline-danger" id="clearClientsBtn">Limpiar clientes</button>
+        </div>
+        <h6>Clientes de la fecha:</h6>
+        <input id="filterDate" type="date" class="form-control mb-2">
+        <div id="clientsList" class="small"></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS Y GASTOS -->
+    <div class="col-lg-4">
+      <div class="card p-3">
+        <h5>2️⃣ Productos y Gastos</h5>
+        <label class="form-label mt-2">Producto</label>
+        <select id="productSelect" class="form-select mb-2"></select>
+
+        <div class="row g-2 mb-2">
+          <div class="col">
+            <input id="productQty" type="number" class="form-control" placeholder="Cantidad" min="1" value="1">
+          </div>
+          <div class="col">
+            <input id="productPrice" type="number" class="form-control" placeholder="Precio">
+          </div>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="saveOverride">
+          <label class="form-check-label small" for="saveOverride">
+            Guardar precio como predeterminado para el cliente
+          </label>
+        </div>
+
+        <button class="btn btn-success w-100 mb-3" id="addToCartBtn">Agregar al carrito</button>
+        <small id="selectedClientHint" class="text-muted d-block mb-3">No hay cliente seleccionado</small>
+
+        <hr>
+        <h6>Registrar Gasto del Día</h6>
+        <input id="expenseDesc" class="form-control mb-2" placeholder="Descripción del gasto">
+        <input id="expenseAmount" type="number" class="form-control mb-2" placeholder="Monto">
+        <input id="expenseDate" type="date" class="form-control mb-2">
+        <button class="btn btn-warning w-100" id="addExpenseBtn">Registrar Gasto</button>
+      </div>
+    </div>
+
+    <!-- CARRITO Y REPORTE -->
+    <div class="col-lg-4">
+      <div class="card p-3">
+        <h5>3️⃣ Venta & Reporte Diario</h5>
+
+        <div class="table-responsive mb-2" style="max-height:200px; overflow:auto;">
+          <table class="table table-sm" id="cartTable">
+            <thead class="table-light"><tr><th>Prod.</th><th>Precio</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>Total:</strong>
+          <span id="cartTotal">--</span>
+        </div>
+
+        <div class="d-flex gap-2 mb-3">
+          <button class="btn btn-primary w-100" id="finalizeSaleBtn">Finalizar venta</button>
+          <button class="btn btn-outline-secondary" id="clearCartBtn">Vaciar</button>
+        </div>
+
+        <hr>
+        <h6>Reporte Diario</h6>
+        <input id="reportDate" type="date" class="form-control mb-2">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-info" id="refreshReportBtn">Actualizar</button>
+          <button class="btn btn-success" id="exportSalesBtn">CSV Ventas</button>
+          <button class="btn btn-success" id="exportExpensesBtn">CSV Gastos</button>
+          <button class="btn btn-danger" id="exportPDFBtn">PDF Reporte</button>
+        </div>
+
+        <div id="reportCard" class="border rounded p-2 bg-light small">
+          <p><strong>Ventas totales:</strong> <span id="reportSalesTotal">-</span></p>
+          <p><strong>Gastos totales:</strong> <span id="reportExpensesTotal">-</span></p>
+          <p><strong>Ganancia:</strong> <span id="reportProfit">-</span></p>
+          <p id="reportCounts" class="text-muted small"></p>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </div>
+</div>
+
+<footer>© 2025 </footer>
+
+
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+[
+  { "id": "p1", "nombre": "Cerveza tipo 1", "precio": 3000 },
+  { "id": "p2", "nombre": "Cerveza tupo 2", "precio": 3300 },
+  { "id": "p3", "nombre": "Ron", "precio": 80000 },
+  { "id": "p4", "nombre": "Gaseosa", "precio": 3000 },
+  { "id": "p5", "nombre": "Agua", "precio": 3000}
+]
