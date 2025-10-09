@@ -27,11 +27,11 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
 
 <div class="container mb-5">
 
+  <!-- Paneles superiores -->
   <div class="row g-4">
-
-    <!-- CLIENTES -->
     <div class="col-lg-4">
-      <div class="card p-3">
+      <div class="card p-3 h-100">
+        <!-- CLIENTES -->
         <h5>1️⃣ Crear Cliente (Noche)</h5>
         <div class="mb-2 text-muted small">Crea un cliente para la noche. Ej: "Mesa 5", "Cliente Pedro".</div>
         <input id="clientName" class="form-control mb-2" placeholder="Nombre del cliente">
@@ -46,13 +46,12 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
       </div>
     </div>
 
-    <!-- PRODUCTOS Y GASTOS -->
     <div class="col-lg-4">
-      <div class="card p-3">
+      <div class="card p-3 h-100">
+        <!-- PRODUCTOS Y GASTOS -->
         <h5>2️⃣ Productos y Gastos</h5>
         <label class="form-label mt-2">Producto</label>
         <select id="productSelect" class="form-select mb-2"></select>
-
         <div class="row g-2 mb-2">
           <div class="col">
             <input id="productQty" type="number" class="form-control" placeholder="Cantidad" min="1" value="1">
@@ -61,17 +60,14 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
             <input id="productPrice" type="number" class="form-control" placeholder="Precio">
           </div>
         </div>
-
         <div class="form-check mb-3">
           <input class="form-check-input" type="checkbox" id="saveOverride">
           <label class="form-check-label small" for="saveOverride">
             Guardar precio como predeterminado para el cliente
           </label>
         </div>
-
         <button class="btn btn-success w-100 mb-3" id="addToCartBtn">Agregar al carrito</button>
         <small id="selectedClientHint" class="text-muted d-block mb-3">No hay cliente seleccionado</small>
-
         <hr>
         <h6>Registrar Gasto del Día</h6>
         <input id="expenseDesc" class="form-control mb-2" placeholder="Descripción del gasto">
@@ -81,28 +77,24 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
       </div>
     </div>
 
-    <!-- CARRITO Y REPORTE -->
     <div class="col-lg-4">
-      <div class="card p-3">
+      <div class="card p-3 h-100">
+        <!-- CARRITO Y REPORTE -->
         <h5>3️⃣ Venta & Reporte Diario</h5>
-
         <div class="table-responsive mb-2" style="max-height:200px; overflow:auto;">
           <table class="table table-sm" id="cartTable">
             <thead class="table-light"><tr><th>Prod.</th><th>Precio</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
-
         <div class="d-flex justify-content-between align-items-center mb-2">
           <strong>Total:</strong>
           <span id="cartTotal">--</span>
         </div>
-
         <div class="d-flex gap-2 mb-3">
           <button class="btn btn-primary w-100" id="finalizeSaleBtn">Finalizar venta</button>
           <button class="btn btn-outline-secondary" id="clearCartBtn">Vaciar</button>
         </div>
-
         <hr>
         <h6>Reporte Diario</h6>
         <input id="reportDate" type="date" class="form-control mb-2">
@@ -112,7 +104,6 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
           <button class="btn btn-success" id="exportExpensesBtn">CSV Gastos</button>
           <button class="btn btn-danger" id="exportPDFBtn">PDF Reporte</button>
         </div>
-
         <div id="reportCard" class="border rounded p-2 bg-light small">
           <p><strong>Ventas totales:</strong> <span id="reportSalesTotal">-</span></p>
           <p><strong>Gastos totales:</strong> <span id="reportExpensesTotal">-</span></p>
@@ -121,13 +112,20 @@ footer { text-align:center; margin-top:20px; color:#777; font-size:0.9em; }
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
   </div>
+
+  <!-- Historial de ventas del cliente en la parte inferior -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card p-3">
+        <div id="clientSalesHistoryContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </div>
 
 <footer>© 2025 </footer>
-
-
-
 </body>
 </html>
