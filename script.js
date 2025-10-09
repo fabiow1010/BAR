@@ -203,6 +203,19 @@ function renderReport(date) {
     const expensesDay = expenses.filter(e => e.date === date);
     const totalSales = salesDay.reduce((a, b) => a + b.total, 0);
     const totalExpenses = expensesDay.reduce((a, b) => a + b.amount, 0);
+
+    // Mostrar detalle de gastos
+    const expensesDetail = expensesDay.length
+        ? `<ul>${expensesDay.map(e => `<li>${e.desc}: $${e.amount}</li>`).join('')}</ul>`
+        : '<span>No hay gastos registrados.</span>';
+    document.getElementById('reportExpensesDetail').innerHTML = expensesDetail;
+
+    // Mostrar detalle de ventas
+    const salesDetail = salesDay.length
+        ? `<ul>${salesDay.map(s => `<li>Venta: $${s.total}</li>`).join('')}</ul>`
+        : '<span>No hay ventas registradas.</span>';
+    document.getElementById('reportSalesDetail').innerHTML = salesDetail;
+
     document.getElementById('reportSalesTotal').innerText = totalSales;
     document.getElementById('reportExpensesTotal').innerText = totalExpenses;
     document.getElementById('reportProfit').innerText = totalSales - totalExpenses;
@@ -236,12 +249,45 @@ function exportPDFReport(date) {
     const sales = localLoad(LS.SALES, []).filter(s => s.date === date);
     const expenses = localLoad(LS.EXPENSES, []).filter(e => e.date === date);
     const doc = new window.jspdf.jsPDF();
+
     doc.text(`Reporte Diario - ${date}`, 10, 10);
     doc.text(`Ventas: ${sales.length}`, 10, 20);
     doc.text(`Total Ventas: ${sales.reduce((a, b) => a + b.total, 0)}`, 10, 30);
-    doc.text(`Gastos: ${expenses.length}`, 10, 40);
-    doc.text(`Total Gastos: ${expenses.reduce((a, b) => a + b.amount, 0)}`, 10, 50);
-    doc.text(`Ganancia: ${sales.reduce((a, b) => a + b.total, 0) - expenses.reduce((a, b) => a + b.amount, 0)}`, 10, 60);
+
+    // Listado de ventas
+    let y = 40;
+    doc.text('Detalle de Ventas:', 10, y);
+    y += 7;
+    if (sales.length) {
+        sales.forEach(s => {
+            doc.text(`- $${s.total}: ${s.items.map(i => `${i.name} x${i.qty}`).join(', ')}`, 12, y);
+            y += 7;
+        });
+    } else {
+        doc.text('No hay ventas registradas.', 12, y);
+        y += 7;
+    }
+
+    // Listado de gastos
+    doc.text(`Gastos: ${expenses.length}`, 10, y);
+    y += 7;
+    doc.text(`Total Gastos: ${expenses.reduce((a, b) => a + b.amount, 0)}`, 10, y);
+    y += 7;
+    doc.text('Detalle de Gastos:', 10, y);
+    y += 7;
+    if (expenses.length) {
+        expenses.forEach(e => {
+            doc.text(`- $${e.amount}: ${e.desc}`, 12, y);
+            y += 7;
+        });
+    } else {
+        doc.text('No hay gastos registrados.', 12, y);
+        y += 7;
+    }
+
+    // Ganancia
+    doc.text(`Ganancia: ${sales.reduce((a, b) => a + b.total, 0) - expenses.reduce((a, b) => a + b.amount, 0)}`, 10, y);
+
     doc.save(`reporte_${date}.pdf`);
 }
 
