@@ -348,6 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = document.getElementById('reportDate').value || todayStr();
         exportPDFReport(date);
     });
-});
 
-// DEPURAR CLIENTES UNITARIAMENTE
+    renderReport(todayStr());
+});
