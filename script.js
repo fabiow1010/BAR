@@ -232,18 +232,6 @@ function renderReport(date) {
     const totalSales = salesDay.reduce((a, b) => a + b.total, 0);
     const totalExpenses = expensesDay.reduce((a, b) => a + b.amount, 0);
 
-    // Mostrar detalle de gastos
-    const expensesDetail = expensesDay.length
-        ? `<ul>${expensesDay.map(e => `<li>${e.desc}: $${e.amount}</li>`).join('')}</ul>`
-        : '<span>No hay gastos registrados.</span>';
-    document.getElementById('reportExpensesDetail').innerHTML = expensesDetail;
-
-    // Mostrar detalle de ventas
-    const salesDetail = salesDay.length
-        ? `<ul>${salesDay.map(s => `<li>Venta: $${s.total}</li>`).join('')}</ul>`
-        : '<span>No hay ventas registradas.</span>';
-    document.getElementById('reportSalesDetail').innerHTML = salesDetail;
-
     document.getElementById('reportSalesTotal').innerText = totalSales;
     document.getElementById('reportExpensesTotal').innerText = totalExpenses;
     document.getElementById('reportProfit').innerText = totalSales - totalExpenses;
