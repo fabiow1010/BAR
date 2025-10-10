@@ -1,7 +1,9 @@
 [
-  { "id": "p1", "nombre": "Cerveza tipo 1", "precio": 3000 },
-  { "id": "p2", "nombre": "Cerveza tupo 2", "precio": 3300 },
-  { "id": "p3", "nombre": "Ron", "precio": 80000 },
-  { "id": "p4", "nombre": "Gaseosa", "precio": 3000 },
-  { "id": "p5", "nombre": "Agua", "precio": 3000}
+  { "id": "p1", "nombre": "Cerveza Poker-Aguila", "precio": 3000 },
+  { "id": "p2", "nombre": "Cerveza Aguila Light", "precio": 3300 },
+  { "id": "p3", "nombre": "Aguardiente Amarillo Azul", "precio": 80000 },
+  { "id": "p4", "nombre": "Gaseosa", "precio": 4000 },
+  { "id": "p5", "nombre": "Agua", "precio": 3000},
+  { "id": "p6", "nombre": "Cubetazo (6 poker-aguila)", "precio": 17000},
+  { "id": "p6", "nombre": "Botella Ron", "precio": 17000}
 ]

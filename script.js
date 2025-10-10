@@ -1,9 +1,10 @@
 const LS = {
-    PRODUCTS:'bar_products', CLIENTS:'bar_clients', SALES:'bar_sales', EXPENSES:'bar_expenses', OVERRIDES:'bar_client_overrides', CART_HISTORY:'bar_cart_history'
+    PRODUCTS: 'bar_products', CLIENTS: 'bar_clients', SALES: 'bar_sales', EXPENSES: 'bar_expenses', OVERRIDES: 'bar_client_overrides', CART_HISTORY: 'bar_cart_history'
 };
 
 let CART = [];
 let selectedClientId = null;
+let blockedClients = []; // IDs de clientes bloqueados
 
 // Utilidades
 function localLoad(key, def) {
@@ -13,7 +14,7 @@ function localSave(key, val) {
     localStorage.setItem(key, JSON.stringify(val));
 }
 function todayStr() {
-    return new Date().toISOString().slice(0,10);
+    return new Date().toISOString().slice(0, 10);
 }
 
 // Cargar productos en el select
@@ -42,10 +43,34 @@ function renderClientsList(date) {
     const filtered = date ? clients.filter(c => c.createdAt === date) : clients;
     document.getElementById('clientsList').innerHTML = filtered.map(c =>
         `<div>
-            <button class="btn btn-sm btn-outline-primary" onclick="selectClient('${c.id}')">${c.name}</button>
+            <button class="btn btn-sm ${selectedClientId === c.id ? 'btn-success' : 'btn-outline-primary'}" onclick="selectClient('${c.id}')" ${blockedClients.includes(c.id) ? 'disabled' : ''}>${c.name}</button>
             <button class="btn btn-sm btn-primary" onclick="showClientSalesHistory('${c.id}')">💰 Consumo de ${c.name}</button>
+            <label class="text-muted">
+                <input type="checkbox" ${blockedClients.includes(c.id) ? 'checked' : ''} onchange="toggleBlockClient('${c.id}', this.checked)">✅Pago
+            </label>
         </div>`
     ).join('');
+    // Mostrar el cliente seleccionado en la parte superior
+    const selected = clients.find(x => x.id === selectedClientId);
+    document.getElementById('selectedClientHint').innerHTML = selected
+        ? `<span class="badge bg-success">Cliente seleccionado: ${selected.name} (${selected.createdAt})</span>`
+        : `<span class="text-muted">No hay cliente seleccionado</span>`;
+}
+
+function toggleBlockClient(clientId, checked) {
+    if (checked) {
+        if (!blockedClients.includes(clientId)) blockedClients.push(clientId);
+    } else {
+        blockedClients = blockedClients.filter(id => id !== clientId);
+    }
+    renderClientsList(); // Actualiza la lista para reflejar el estado
+    // Si el cliente bloqueado estaba seleccionado, deselecciona
+    if (selectedClientId === clientId && checked) {
+        selectedClientId = null;
+        document.getElementById('selectedClientHint').innerText = 'No hay cliente seleccionado';
+        CART = [];
+        renderCart();
+    }
 }
 
 function createClient() {
@@ -54,7 +79,7 @@ function createClient() {
     if (!name) return alert('Ingrese nombre de cliente');
     const clients = localLoad(LS.CLIENTS, []);
     const id = 'c' + Date.now();
-    clients.push({id, name, createdAt: date});
+    clients.push({ id, name, createdAt: date });
     localSave(LS.CLIENTS, clients);
     renderClientsList(date);
     document.getElementById('clientName').value = '';
@@ -65,12 +90,15 @@ function clearClients() {
     renderClientsList();
 }
 
-function selectClient(cid){
-    selectedClientId=cid;
-    const c=localLoad(LS.CLIENTS,[]).find(x=>x.id===cid);
-    document.getElementById('selectedClientHint').innerText=`Cliente: ${c.name} (${c.createdAt})`;
-    if(CART.length > 0) saveClientCartHistory(cid, CART);
-    CART=[];renderCart();
+function selectClient(cid) {
+    if (blockedClients.includes(cid)) {
+        alert('Este cliente está bloqueado para nuevas ventas.');
+        return;
+    }
+    selectedClientId = cid;
+    renderClientsList(); // Actualiza el resaltado y el hint
+    if (CART.length > 0) saveClientCartHistory(cid, CART);
+    CART = []; renderCart();
 }
 
 
@@ -116,11 +144,11 @@ function saveClientCartHistory(clientId, cart) {
     const date = todayStr();
     const history = loadCartHistory();
     history[clientId] = history[clientId] || {};
-    history[clientId][date] = cart.map(item => ({...item}));
+    history[clientId][date] = cart.map(item => ({ ...item }));
     saveCartHistory(history);
 }
-function loadCartHistory(){ return localLoad(LS.CART_HISTORY, {}); }
-function saveCartHistory(h){ localSave(LS.CART_HISTORY, h); }
+function loadCartHistory() { return localLoad(LS.CART_HISTORY, {}); }
+function saveCartHistory(h) { localSave(LS.CART_HISTORY, h); }
 function getClientCartHistory(clientId) {
     const history = loadCartHistory();
     return history[clientId] || {};
@@ -150,7 +178,7 @@ function addToCart() {
     const qty = parseInt(document.getElementById('productQty').value, 10) || 1;
     const price = parseInt(document.getElementById('productPrice').value, 10) || prod.precio;
     if (!prod) return alert('Producto inválido');
-    CART.push({id: prodId, name: prod.nombre, price, qty});
+    CART.push({ id: prodId, name: prod.nombre, price, qty });
     renderCart();
 }
 
@@ -170,7 +198,7 @@ function finalizeSale() {
     const sales = localLoad(LS.SALES, []);
     sales.push({
         clientId: selectedClientId,
-        items: CART.map(i => ({...i})),
+        items: CART.map(i => ({ ...i })),
         total: CART.reduce((a, b) => a + b.price * b.qty, 0),
         date: todayStr()
     });
@@ -187,7 +215,7 @@ function addExpense() {
     const date = document.getElementById('expenseDate').value || todayStr();
     if (!desc || !amount) return alert('Complete los datos del gasto');
     const expenses = localLoad(LS.EXPENSES, []);
-    expenses.push({desc, amount, date});
+    expenses.push({ desc, amount, date });
     localSave(LS.EXPENSES, expenses);
     document.getElementById('expenseDesc').value = '';
     document.getElementById('expenseAmount').value = '';
@@ -229,7 +257,7 @@ function exportCSV(data, filename) {
     const csv = [keys.join(',')].concat(
         data.map(row => keys.map(k => `"${row[k]}"`).join(','))
     ).join('\n');
-    const blob = new Blob([csv], {type:'text/csv'});
+    const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = filename;
@@ -321,3 +349,5 @@ document.addEventListener('DOMContentLoaded', () => {
         exportPDFReport(date);
     });
 });
+
+// DEPURAR CLIENTES UNITARIAMENTE
